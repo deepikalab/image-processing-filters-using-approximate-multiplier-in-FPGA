@@ -1,0 +1,20 @@
+import cv2
+import numpy as np
+from matplotlib import pyplot as plt
+img = cv2.imread('/home/pi/Desktop/lenna.jpg')
+rgb_img=cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
+kernel = np.ones((5,5),np.float32)/25
+avg = cv2.filter2D(rgb_img,-1,kernel)
+gaus = cv2.GaussianBlur(rgb_img,(5,5),0)
+edge = cv2.Canny(rgb_img,100,200)
+plt.subplot(221),plt.imshow(rgb_img),plt.title('Original')
+plt.xticks([]), plt.yticks([])
+plt.subplot(222),plt.imshow(avg),plt.title('Averaging')
+plt.xticks([]), plt.yticks([])
+plt.subplot(223),plt.imshow(gaus),plt.title('Gaussian Filtering')
+plt.xticks([]), plt.yticks([])
+plt.subplot(224),plt.imshow(edge),plt.title('Edge Detection')
+plt.xticks([]), plt.yticks([])
+plt.show()
+
+

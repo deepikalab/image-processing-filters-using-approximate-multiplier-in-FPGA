@@ -1,0 +1,71 @@
+FILTER CODE
+Main module – filter
+module filter(clk,rst,data_out);
+    input clk;
+    input rst;
+    output reg [7:0] data_out;
+    wire ena;
+    reg wea;
+   
+    reg [7:0] test_memory [0:89];
+    wire [7:0] a0 [0:8];
+    wire [15:0] m [0:89];
+    wire [7:0] x [0:9];
+    reg [9:0]q;
+       
+    initial begin
+        $display("Loading rom.");
+        $readmemh("crct.mem", test_memory);
+    end
+    
+    //3x3 gaussian kernel
+ assign a0[0]=8'd1;
+ assign a0[1]=8'd2;
+ assign a0[2]=8'd1;
+ assign a0[3]=8'd2;
+ assign a0[4]=8'd4;
+ assign a0[5]=8'd2;
+ assign a0[6]=8'd1;
+ assign a0[7]=8'd2;
+ assign a0[8]=8'd1;
+ 
+     //filtering 
+genvar j,k ;
+generate
+for (k=0;k<=89;k=k+1)
+  begin
+  for (j=0;j<=8;j=j+1)
+  begin
+  mul obj(clk,rst,test_memory[j+k*9],a0[j],m[j+k*9]);
+  end
+assign x[k]=(m[0+k*9]+m[1+k*9]+m[2+k*9]+m[3+k*9]+m[4+k*9]+m[5+k*9]+m[6+k*9]+m[7+k*9]+m[8+k*9])/16;
+end
+endgenerate
+
+initial 
+begin
+q=0;
+end
+
+always @(posedge clk)
+begin
+if (ena)
+begin
+if (wea)
+       begin
+       data_out <= x[q];
+       q=q+1;
+       end
+       end
+end
+endmodule
+
+Modules to be added
+1.mul (which includes log,antilog,adder,etc)
+
+Memory file to be added
+1.crct.mem (computed from MATLAB)
+
+
+  
+

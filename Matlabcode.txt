@@ -1,0 +1,66 @@
+clear all;
+img11 = imread('cameraman.tif');
+% img11 = rgb2gray(img1);
+x=200; %Image size (eg) 200 x 200
+Gr=imresize(img11,[x x]);
+N=imnoise(Gr,'gaussian');
+% Pixel Replication
+C=uint8(zeros(x+2,x+2));
+C(1,:)=[N(1,1) N(1,:) N(1,x)];
+C(:,1)=[N(1,1);N(:,1);N(x,1)];
+C(x+2,:)=[N(x,1) N(x,:) N(x,x)];
+C(:,x+2)=[N(1,x);N(:,x);N(x,x)];
+C(2:x+1,2:x+1)=N(1:x,:);
+
+% cc=zeros(1,x);
+% dd=zeros(x+1,1);
+% cc1=zeros(1,x+1);
+% dd1=zeros(x+2,1);
+% C = vertcat(cc,b1)
+% C1 = horzcat(dd,C)
+% C2= vertcat(C1,cc1)
+% C3 = horzcat(C2,dd1)
+
+e=zeros(1,((x+2)*(x+2)));
+k=1;counter=0;
+a=1;b=3;c=1;d=3;
+for lj=1:((x)^2)
+ for i=a:b
+        for j=c:d
+        e(k)=C(i,j);
+        k=k+1;
+        counter=counter+1;
+        end
+            if counter==9
+               
+                c=c+1
+                d=d+1;
+                counter=0
+            end
+            if (j==(x+2) && i==b)
+                a=a+1;
+                b=b+1;
+                c=1;
+                d=3;
+            end
+ 
+ end
+end
+ind=find(~e);
+for ii=1:size(ind,2)
+    e(ind(ii))=1;
+end
+
+% New txt file creation
+fid = fopen('crct.coe', 'wt');
+% Hex value write to the txt file
+%fprintf(fid,'memory_initialization_radix=16;\n');
+%fprintf(fid,'memory_initialization_vector=\n');
+fprintf(fid,'%x\n', e);
+% Close the txt file
+fclose(fid);
+figure ;
+imshow(C);
+figure();
+imshow(img11);
+
